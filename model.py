@@ -1,74 +1,96 @@
-"""import torch
-import torch.nn as nn
-import torch.nn.functional as F
-
-class MNISTNet(nn.Module):
-    def __init__(self):
-        super(MNISTNet, self).__init__()
-        self.conv1 = nn.Conv2d(1, 8, (5,5))
-        self.conv2 = nn.Conv2d(8, 16, (5,5))
-        #torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
-
-        self.pool = nn.MaxPool2d(2,2)
-        
-        self.fc1 = nn.Linear(16 * 4 * 4, 128)  # First fully connected layer
-        self.fc2 = nn.Linear(128, 64)          # Second fully connected layer
-        self.fc3 = nn.Linear(64, 10)           # Output layer for 10 classes (MNIST digits)
-
-    
-    def forward(self, x):
-        x = F.relu(self.conv1(x))       # First convolution followed by
-        x = self.pool(x)                # a relu activation and a max pooling#
-        x = F.relu(self.conv2(x))
-        x = self.pool(x) 
-        
-        x = torch.flatten(x,1)
-        x = F.relu(self.fc1(x))  
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-    
-    def get_features(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 4 * 4)
-        return x """
-
-# Solution
+### Project ###
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
- 
-class MNISTNet(nn.Module):
-    def __init__(self):
-        super(MNISTNet, self).__init__()
-        self.conv1 = nn.Conv2d(1, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 4 * 4, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
- 
+from tensorflow.keras.applications import VGG16
+
+conv_base = VGG16(
+    weights = 'imagenet', # We use the network weights already pre-trained on the ImageNet database.
+    include_top = False,  # The Dense part of the original network is not retained
+    input_shape = (img_width, img_height, 3)
+)
+
+
+def double_conv(in_channels, out_channels):
+    # returns a block compsed of two Convolution layers with ReLU activation function
+    return nn.Sequential(
+        nn.Conv2d(in_channels, out_channels, 3, padding=1),
+        nn.ReLU(),
+        nn.Conv2d(out_channels, out_channels, 3, padding=1),
+        nn.ReLU()
+    )   
+
+class DownSampleBlock(nn.Module):
+
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.conv_block = double_conv(in_channels, out_channels)
+        self.maxpool = nn.MaxPool2d(2) 
+
     def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = torch.max_pool2d(x, (2,2))
-        x = F.relu(self.conv2(x))
-        x = torch.max_pool2d(x, (2,2))
-        x = torch.flatten(x, 1) #or x.view(-1, 16 * 4 * 4)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x_skip = self.conv_block(x)
+        x = self.maxpool(x_skip)
+
+        return x , x_skip
+
+class UpSampleBlock(nn.Module):
+
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.conv_block = double_conv(in_channels, out_channels)
+        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+
+    def forward(self, x, x_skip):
+        x = self.upsample(x)
+        x = torch.cat([x, x_skip], dim=1)
+        x = self.conv_block(x)
+        
         return x
- 
+    
+
+class UNet(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+                
+        self.downsample_block_1 = DownSampleBlock(1, 32)
+        self.downsample_block_2 = DownSampleBlock(32, 64)
+        self.downsample_block_3 = DownSampleBlock(64, 128)
+        self.middle_conv_block = double_conv(128, 256)        
+
+            
+        self.upsample_block_3 = UpSampleBlock(128 + 256, 128)
+        self.upsample_block_2 = UpSampleBlock(128 + 64, 64)
+        self.upsample_block_1 = UpSampleBlock(64 + 32, 32)
+        
+        self.last_conv = nn.Conv2d(32, 3, 1)
+        
+        
+    def forward(self, x):
+        x, x_skip1 = self.downsample_block_1(x)
+        x, x_skip2 = self.downsample_block_2(x)
+        x, x_skip3 = self.downsample_block_3(x) 
+        
+        x = self.middle_conv_block(x)
+        
+        x = self.upsample_block_3(x, x_skip3) 
+        x = self.upsample_block_2(x, x_skip2)
+        x = self.upsample_block_1(x, x_skip1)       
+        
+        out = F.sigmoid(self.last_conv(x))
+        
+        return out
+
     def get_features(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 4 * 4)
+        x, _ = self.downsample_block_1(x)
+        x, _ = self.downsample_block_2(x)
+        x, _ = self.downsample_block_3(x)
         return x
- 
- 
+        
+        
 if __name__=='__main__':
-    x = torch.rand(16,1,28,28)
-    net = MNISTNet()
+    x = torch.rand(16,1,224,224)
+    net = UNet()
     y = net(x)
-    assert y.shape == (16,10)
+    assert y.shape == (16,3,224,224)
+    net.get_features(x)
