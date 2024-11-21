@@ -2,6 +2,7 @@
 
 import argparse
 import torch
+import torch.nn as nn
 import torchvision.transforms as transforms
 from flask import Flask, jsonify, request
 from PIL import Image
