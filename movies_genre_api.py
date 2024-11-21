@@ -6,7 +6,8 @@ import torchvision.transforms as transforms
 from flask import Flask, jsonify, request
 from PIL import Image
 import io
-from model import MovieNet
+# from model import MovieNet
+from torchvision import models
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -17,9 +18,18 @@ parser.add_argument('--model_path', type=str, default = 'model_resnet50.pth', he
 args = parser.parse_args()
 model_path = args.model_path
 
+model = models.resnet50(pretrained=False)
+num_ftrs = model.fc.in_features
+model.fc = nn.Linear(num_ftrs, len(dataset.classes))
+model = model.to(device)
+model.load_state_dict(torch.load(model_path, map_location=device))
+model.eval()
+
+'''
 model = MovieNet().to(device)
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.eval()
+'''
 
 # Define the genre labels
 '''
