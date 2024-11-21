@@ -21,7 +21,7 @@ model_path = args.model_path
 
 model = models.resnet50(pretrained=False)
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, len(dataset.classes))
+model.fc = nn.Linear(num_ftrs, 10)
 model = model.to(device)
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.eval()
