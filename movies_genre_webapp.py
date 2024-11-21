@@ -5,6 +5,10 @@ from PIL import Image
 import requests
 import io
 
+genre_labels = [
+    "action", "animation", "comedy","documentary", "drama", "fantasy", "horror", "romance", 
+    "science Fiction", "thriller"
+]
 
 def recognize_digit(image):
     print(image)
@@ -13,7 +17,8 @@ def recognize_digit(image):
     image.save(img_binary, format="PNG")
     # Send request to the API
     response = requests.post("http://127.0.0.1:5000/predict", data=img_binary.getvalue())
-    return response.json()["prediction"]
+    print(response)
+    return genre_labels[response.json()["prediction"][0]]
 
 if __name__=='__main__':
 
