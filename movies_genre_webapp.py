@@ -8,7 +8,7 @@ import io
 
 def recognize_digit(image):
     print(image)
-    image = Image.fromarray(image['composite'].astype('uint8'))
+    image = Image.fromarray(image.astype('uint8'))
     img_binary = io.BytesIO()
     image.save(img_binary, format="PNG")
     # Send request to the API
