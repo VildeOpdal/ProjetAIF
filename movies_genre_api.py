@@ -88,8 +88,8 @@ def batch_predict():
     # Make prediction
     with torch.no_grad():
         outputs = model(batch_tensor)
-        #_, predictions = outputs.max(1)
-        _, predicted = outputs
+        _, predictions = outputs.max(1)
+        #_, predicted = outputs
 
         # Map the predictions to genres
         #genres = [genre_labels[int(pred)] for pred in predictions]
