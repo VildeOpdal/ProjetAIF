@@ -1,30 +1,45 @@
-### Project ###
-
 import gradio as gr
 from PIL import Image
 import requests
 import io
 
+# Genre labels
 genre_labels = [
-    "action", "animation", "comedy","documentary", "drama", "fantasy", "horror", "romance", 
-    "science Fiction", "thriller"
+    "action", "animation", "comedy", "documentary", "drama",
+    "fantasy", "horror", "romance", "science fiction", "thriller"
 ]
 
-def recognize_digit(image):
-    print(image)
-    image = Image.fromarray(image.astype('uint8'))
-    img_binary = io.BytesIO()
-    image.save(img_binary, format="PNG")
-    # Send request to the API
-    response = requests.post("http://127.0.0.1:5000/predict", data=img_binary.getvalue())
-    print(response)
-    return genre_labels[response.json()["prediction"][0]]
+# API request function
+def predict_genre(image):
+    try:
+        # Convert image to binary for API request
+        img_binary = io.BytesIO()
+        image.save(img_binary, format="PNG")
 
-if __name__=='__main__':
+        # Send request to Flask API
+        response = requests.post("http://127.0.0.1:5000/predict", data=img_binary.getvalue())
+        response.raise_for_status()
 
-    gr.Interface(fn=recognize_digit, 
-                inputs="image", 
-                outputs='label',
-                live=True,
-                description="Upload a movie poster image to predict its genre.",
-                ).launch(debug=True, share=True)
+        # Parse API response
+        result = response.json()
+        class_name = result["class_name"]
+        probabilities = result["probabilities"]
+
+        # Format result for display
+        formatted_probabilities = "\n".join(
+            [f"{genre_labels[i]}: {prob:.2%}" for i, prob in enumerate(probabilities)]
+        )
+        return f"Predicted Genre: {class_name}\n\nProbabilities:\n{formatted_probabilities}"
+
+    except Exception as e:
+        return f"Error: {e}"
+
+# Gradio interface
+if __name__ == '__main__':
+    gr.Interface(
+        fn=predict_genre,
+        inputs=gr.Image(type="pil"),
+        outputs="text",
+        live=True,
+        description="Upload a movie poster to predict its genre."
+    ).launch(debug=True, share=True)
