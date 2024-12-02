@@ -9,6 +9,9 @@ genre_labels = [
     "fantasy", "horror", "romance", "science fiction", "thriller"
 ]
 
+API_URL = "http://movies_genre_api:5000/predict"  # Docker
+# API_URL = "http://127.0.0.1:5000/predict"       # local
+
 # API request function
 def predict_genre(image):
     try:
@@ -17,7 +20,7 @@ def predict_genre(image):
         image.save(img_binary, format="PNG")
 
         # Send request to Flask API
-        response = requests.post("http://127.0.0.1:5000/predict", data=img_binary.getvalue())
+        response = requests.post(API_URL, data=img_binary.getvalue())
         response.raise_for_status()
 
         # Parse API response
