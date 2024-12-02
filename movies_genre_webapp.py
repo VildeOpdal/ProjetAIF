@@ -1,5 +1,7 @@
 ### Project ###
 
+API_URL = "http://movies_genre_api:5000"
+
 import gradio as gr
 from PIL import Image
 import requests
@@ -15,8 +17,10 @@ def recognize_digit(image):
     image = Image.fromarray(image.astype('uint8'))
     img_binary = io.BytesIO()
     image.save(img_binary, format="PNG")
+    img_binary.seek(0)
     # Send request to the API
-    response = requests.post("http://127.0.0.1:5000/predict", data=img_binary.getvalue())
+    response = requests.post(API_URL, files={"file": img_binary})
+    # response = requests.post("http://127.0.0.1:5000/predict", data=img_binary.getvalue())
     print(response)
     return genre_labels[response.json()["prediction"][0]]
 

@@ -15,7 +15,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 app = Flask(__name__)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_path', type=str, default = '/Users/corp_sysops/Desktop/AIF/ProjetAIF/model_resnet50.pth', help='model path')
+parser.add_argument('--model_path', type=str, default = './model_resnet50.pth', help='model path')
 args = parser.parse_args()
 model_path = args.model_path
 

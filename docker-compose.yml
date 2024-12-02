@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.10'
 services:
   gradio-app:
     build:
@@ -7,12 +7,12 @@ services:
     ports:
       - "7860:7860"
     depends_on:
-      - model_api
+      - movies_genre_api
 
-  model_api:
+  movies_genre_api:
     build:
       context: .
-      dockerfile: Dockerfile-annoy
+      dockerfile: Dockerfile-api
     ports:
       - "5000:5000"
 
