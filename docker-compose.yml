@@ -1,19 +1,18 @@
-#version: '3.8' # specify docker-compose version
-services: # services to run
-  annoy-db: # name of the first service
-    build: 
-      context: . # specify the directory of the Dockerfile
-      dockerfile: Dockerfile-api # specify the Dockerfile name
-    ports:
-      - "5001:5001" # specify port mapping
-      
+version: '3.10'
+services:
   gradio-app:
     build:
-      context: . # specify the directory of the Dockerfile
-      dockerfile: Dockerfile-gradio # specify the Dockerfile name
+      context: .
+      dockerfile: Dockerfile-gradio
     ports:
-      - "7860:7860" # specify port mapping
+      - "7860:7860"
     depends_on:
-      - annoy-db # specify service dependencies
+      - movies_genre_api
 
-  
+  movies_genre_api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    ports:
+      - "5000:5000"
+
