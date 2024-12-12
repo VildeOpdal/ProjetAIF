@@ -8,6 +8,6 @@ COPY . /app
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 # Make port 7860 available to the world outside this container
 # Gradio by default runs on port 7860
-EXPOSE 7861
+EXPOSE 7860
 # Run the Gradio app when the container launches
 CMD ["python", "gradio_webapp.py"]
