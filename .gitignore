@@ -1,7 +1,13 @@
+/annoy_db.ann
+/annoy_tfidf.ann
+/mobilenet
+/movies_metadata copie.csv
+/movies_metadata.csv
 #Files to ignore
 .DS_Store
 content
 model_resnet50.pth
+model_resnet50_12.pth
 .gradio/
 # Byte-compiled / optimized / DLL files
 __pycache__/

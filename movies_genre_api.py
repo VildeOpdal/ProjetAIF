@@ -6,6 +6,10 @@ from flask import Flask, jsonify, request
 from PIL import Image
 import io
 from torchvision import models
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.ERROR)
 
 # Device setup
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -36,8 +40,13 @@ genre_labels = [
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
-    transforms.Normalize([0.5], [0.5])
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])  # Standard for ResNet50
 ])
+
+# Root endpoint
+@app.route('/')
+def home():
+    return jsonify({"message": "Welcome to the Movie Genre Prediction API!"})
 
 # API endpoint for prediction
 @app.route('/predict', methods=['POST'])
@@ -54,12 +63,17 @@ def predict():
             probabilities = torch.nn.functional.softmax(outputs, dim=1)
             _, predicted = torch.max(outputs, 1)
 
+        # Format probabilities
+        probabilities = probabilities.squeeze(0).tolist()
+        rounded_probabilities = [round(p, 4) for p in probabilities]
+
         return jsonify({
             "predicted_class": int(predicted.item()),
             "class_name": genre_labels[predicted.item()],
-            "probabilities": probabilities.squeeze(0).tolist()
+            "probabilities": rounded_probabilities
         })
     except Exception as e:
+        logging.error(f"Prediction error: {e}")
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
