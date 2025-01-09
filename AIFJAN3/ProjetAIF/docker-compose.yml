@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  movies_genre_api:
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    volumes:
+      - ./model_resnet50_12.pth:/app/model_resnet50_12.pth
+    command: ["python3", "movies_genre_api.py", "--model_path", "/app/model_resnet50_12.pth"]
+    ports:
+      - "5001:5001"
+
+  gradio_app:
+    build:
+      context: .
+      dockerfile: Dockerfile-gradio
+    ports:
+      - "7860:7860"
+    depends_on:
+      - movies_genre_api
+    environment:
+      - MOVIES_API_URL=http://movies_genre_api:5001
