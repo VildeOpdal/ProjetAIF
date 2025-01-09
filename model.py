@@ -16,13 +16,6 @@ from flask import Flask, jsonify, request, send_from_directory
 import io
 
 
-
-
-mobilenet = mobilenet_v3_small(MobileNet_V3_Small_Weights)
-model = mobilenet.features
-model=torch.nn.Sequential(mobilenet.features, torch.nn.AdaptiveAvgPool2d(output_size=1),torch.nn.Flatten()) #extrait les features et on veut que ce soit 1x1 et non pas 7x7
-model.eval()
-
 ### Project ###
 import torch
 import torch.nn as nn
