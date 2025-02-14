@@ -13,6 +13,7 @@ This project implements a movie genre classification system, along with content-
 1. Clone the Repository
 2. Use the next command to run both the web app and the rest API:
 #!/bin/bash
+
 python python api.py &  gradio_app.py
  
 4. Run the following command to build and start the application:
