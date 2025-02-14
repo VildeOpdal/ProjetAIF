@@ -11,9 +11,12 @@ This project implements a movie genre classification system, along with content-
 
 ##  Setup and Execution
 1. Clone the Repository
-2. Build and Run with Docker Compose
-
-Run the following command to build and start the application: docker-compose up --build
+2. Use the next command to run both the web app and the rest API:
+#!/bin/bash
+python python api.py &  gradio_app.py
+ 
+4. Run the following command to build and start the application:
+docker-compose up --build
 
 3. Access the Application
 * Gradio Web Interface: http://localhost:7860
