@@ -21,14 +21,14 @@ Run the following command to build and start the application: docker-compose up 
 
 4. Application Usage
 
-A. Genre Classification
-  1. Upload a movie poster.
-  2. The system will classify the genre. If the uploaded image isn't a movie poster, an anomaly message is displayed.
-
-B. Poster-Based Recommendations
-  1. Upload a movie poster.
-  2. Receive the 5 most visually similar movies.
-
-C. Plot-Based Recommendations
-  1. Enter a movie description.
-  2. Receive the 5 most similar movies.
+  A. Genre Classification
+    1. Upload a movie poster.
+    2. The system will classify the genre. If the uploaded image isn't a movie poster, an anomaly message is displayed.
+  
+  B. Poster-Based Recommendations
+    1. Upload a movie poster.
+    2. Receive the 5 most visually similar movies.
+  
+  C. Plot-Based Recommendations
+    1. Enter a movie description.
+    2. Receive the 5 most similar movies.
