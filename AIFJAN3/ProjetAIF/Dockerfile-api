@@ -20,16 +20,14 @@ RUN pip install --upgrade pip
 # Copy the current directory contents into the container at /app
 COPY . /app
 
+# Download model weights from Google Drive if not already present
+RUN curl -L -o /model_resnet50_12.pth "https://drive.google.com/uc?export=download&id=1pw_9RXcmCEIJtxL1cF_PY_V5bn1hW-A8" -o /model_resnet50_12.pth
+
 # Install Python dependencies
 RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
 
-# Download model weights from Google Drive if not already present
-RUN curl -L -o /model_resnet50_12.pth "https://drive.google.com/uc?id=1pw_9RXcmCEIJtxL1cF_PY_V5bn1hW-A8"
 
-# Download dataset from Google Drive if not already present
-RUN curl -L -o /app/MovieGenre.zip "https://drive.google.com/uc?id=1a_u6l4H4gM8-5XnpRxAZvVe9ciWsSeBv" \
-    && unzip /app/MovieGenre.zip -d /app/data \
-    && rm /app/MovieGenre.zip
+
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5001
