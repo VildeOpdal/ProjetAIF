@@ -49,19 +49,9 @@ transform = transforms.Compose([
     normalize
 ])
 
-# Modèle d'anomalie : détecter si une image est un poster
-anomaly_model = mobilenet_v3_small(weights=MobileNet_V3_Small_Weights.DEFAULT)
-def is_movie_poster(image):
-    image_tensor = transform(image).unsqueeze(0)
-    with torch.no_grad():
-        output = anomaly_model(image_tensor)
-        _, predicted = torch.max(output, 1)
-    return predicted.item() == 1  # Hypothèse : classe 1 = poster
 	
 # Prétraitement d'une image pour obtenir un vecteur représentatif
 def process_image(image):
-    if not is_movie_poster(image):
-        return "L'image fournie n'est pas un poster de film."
 	    
     image_transfo = transform(image)
     vector = model_3(image_transfo.unsqueeze(0)).cpu().detach().numpy().tolist()

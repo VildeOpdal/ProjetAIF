@@ -5,7 +5,7 @@ import io
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-#import torch
+import torch
 import torchvision.transforms as transforms
 #from sklearn.feature_extraction.text import TfidfVectorizer
 #from nltk import word_tokenize
@@ -14,6 +14,7 @@ import torchvision.transforms as transforms
 #import re
 #import nltk
 #import numpy as np
+from torchvision.models import mobilenet_v3_small, MobileNet_V3_Small_Weights
 
 from gradio_webapp import get_distilbert_embeddings, get_tfidf_embeddings
 from model_3 import model_3 
@@ -61,11 +62,28 @@ def process_image(image):
     else:
         return plt.figure()
 
+# Modèle d'anomalie : détecter si une image est un poster
+transform2 = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    normalize
+])
+anomaly_model = mobilenet_v3_small(weights=MobileNet_V3_Small_Weights.DEFAULT)
+anomaly_model.eval() 
+def is_movie_poster(image):
+    image_tensor = transform2(image).unsqueeze(0)
+    with torch.no_grad():
+        output = anomaly_model(image_tensor)
+    _, predicted = torch.max(output, 1)
+    print(predicted.item())
+    return predicted.item() == 917  # Hypothèse : classe 1 = poster
 
 
 # Predict genre
 def predict_genre(image):
     try:
+        if not is_movie_poster(image):
+            return "L'image fournie n'est pas un poster de film."
         img_binary = io.BytesIO()
         image.save(img_binary, format="PNG")
 
