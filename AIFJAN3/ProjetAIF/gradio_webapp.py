@@ -60,8 +60,8 @@ def is_movie_poster(image):
 	
 # Prétraitement d'une image pour obtenir un vecteur représentatif
 def process_image(image):
-    #if not is_movie_poster(image):
-    #    return "L'image fournie n'est pas un poster de film."
+    if not is_movie_poster(image):
+        return "L'image fournie n'est pas un poster de film."
 	    
     image_transfo = transform(image)
     vector = model_3(image_transfo.unsqueeze(0)).cpu().detach().numpy().tolist()
