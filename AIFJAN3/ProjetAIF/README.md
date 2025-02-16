@@ -11,10 +11,10 @@ This project implements a movie genre classification system, along with content-
 
 ##  Setup and Execution
 1. Clone the Repository
-2. Use the next command to run both the web app and the rest API:
+2. Use the next command to run both the web app and the rest API without using docker:
 #!/bin/bash
 
-python python api.py &  gradio_app.py
+python3 movies_genre_api.py & python3 movies_genre_webapp.py
  
 4. Run the following command to build and start the application:
 docker-compose up --build
