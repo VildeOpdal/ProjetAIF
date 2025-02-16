@@ -11,4 +11,3 @@ tqdm
 scikit-learn
 transformers
 nltk
-tensorflow

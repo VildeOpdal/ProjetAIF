@@ -5,18 +5,19 @@ import io
 import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import torch
+#import torch
 import torchvision.transforms as transforms
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk import word_tokenize
-from nltk.stem import SnowballStemmer
-from nltk.corpus import stopwords
-import re
-import nltk
-import numpy as np
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#from nltk import word_tokenize
+#from nltk.stem import SnowballStemmer
+#from nltk.corpus import stopwords
+#import re
+#import nltk
+#import numpy as np
 
 from gradio_webapp import get_distilbert_embeddings, get_tfidf_embeddings
 from model_3 import model_3 
+
 
 # Genre labels
 genre_labels = [
@@ -25,11 +26,11 @@ genre_labels = [
 ]
 
 # API URL
-API_URL = os.getenv("MOVIE_GENRE_API_URL", "http://movies_genre_api:5001")
+API_URL = os.getenv("MOVIE_GENRE_API_URL", "http://localhost:5001")
 
 # Load data
 df = pd.read_csv('DF_path.csv')
-movies_metadata = pd.read_csv('movies_metadata.csv', low_memory=False)
+#movies_metadata = pd.read_csv('movies_metadata.csv', low_memory=False)
 
 # Normalization and transformations
 mean = [0.485, 0.456, 0.406]
@@ -46,7 +47,7 @@ def process_image(image):
     image_transfo = transform(image)
     vector = model_3(image_transfo.unsqueeze(0)).cpu().detach().numpy().tolist()
 
-    response = requests.post('http://movies_genre_api:5001/reco_poster', json={'vector': vector})
+    response = requests.post('http://localhost:5001/reco_poster', json={'vector': vector})
     if response.status_code == 200:
         indices = response.json()
         paths = [str(df.path[i]) for i in indices]

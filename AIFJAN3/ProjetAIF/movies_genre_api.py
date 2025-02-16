@@ -8,6 +8,10 @@ import io
 from torchvision import models
 import logging
 
+from annoy import AnnoyIndex
+import pandas as pd
+
+
 # Setup logging
 logging.basicConfig(level=logging.ERROR)
 
@@ -43,7 +47,6 @@ transform = transforms.Compose([
     transforms.Normalize([0.5], [0.5])  # Standard for ResNet50
 ])
 
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
@@ -51,20 +54,14 @@ Application Flask pour la recommandation de films
 
 """
 # Importations des bibliothèques nécessaires
-from flask import Flask, request, jsonify
-from annoy import AnnoyIndex
-import pandas as pd
-from PIL import Image
-import io
-import torchvision.transforms as transforms
-import nltk
-from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.stem import SnowballStemmer
-from nltk import word_tokenize
-import re
-nltk.download('punkt')
-nltk.download('stopwords')
+#import nltk
+#from nltk.corpus import stopwords
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#from nltk.stem import SnowballStemmer
+#from nltk import word_tokenize
+#import re
+#nltk.download('punkt')
+#nltk.download('stopwords')
 
 
 

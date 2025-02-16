@@ -14,17 +14,17 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && apt-get clean
 
-# Upgrade pip to the latest version
-RUN pip install --upgrade pip
-
 # Copy the current directory contents into the container at /app
 COPY . /app
 
 # Download model weights from Google Drive if not already present
-RUN curl -L -o /model_resnet50_12.pth "https://drive.google.com/uc?export=download&id=1pw_9RXcmCEIJtxL1cF_PY_V5bn1hW-A8" -o /model_resnet50_12.pth
+#RUN curl -L -o /model_resnet50_12.pth "https://drive.google.com/uc?export=download&id=1pw_9RXcmCEIJtxL1cF_PY_V5bn1hW-A8" -o /model_resnet50_12.pth
+
+RUN pip install gdown
+RUN gdown --id 1pw_9RXcmCEIJtxL1cF_PY_V5bn1hW-A8 -O /model_resnet50_12.pth
 
 # Install Python dependencies
-RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
+RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements-api.txt
 
 
 

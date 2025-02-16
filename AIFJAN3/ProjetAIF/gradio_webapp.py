@@ -5,29 +5,30 @@ Application Flask pour la recommandation de films
 # Importations nécessaires
 import gradio as gr
 import requests
-import random
+#import random
 import matplotlib.pyplot as plt
 import pandas as pd
 from PIL import Image
 import torch
-from torchvision import datasets
-from torch.utils.data import DataLoader
+#from torchvision import datasets
+#from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from model_3 import model_3
 from model_2 import model_2
 import torch
 from torchvision.models import mobilenet_v3_small, MobileNet_V3_Small_Weights
-from transformers import DistilBertModel, DistilBertTokenizerFast
+from transformers import  DistilBertTokenizerFast #DistilBertModel,
 import numpy as np
-from annoy import AnnoyIndex
-from flask import Flask, jsonify, request, send_from_directory
-import io
+#from annoy import AnnoyIndex
+#from flask import Flask, jsonify, request, send_from_directory
+#import io
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk import word_tokenize
 from nltk.stem import SnowballStemmer
 import nltk
 from nltk.corpus import stopwords
 import re
+
 
 # Chargement des données 
 df = pd.read_csv('DF_path.csv')
@@ -59,8 +60,8 @@ def is_movie_poster(image):
 	
 # Prétraitement d'une image pour obtenir un vecteur représentatif
 def process_image(image):
-    if not is_movie_poster(image):
-        return "L'image fournie n'est pas un poster de film."
+    #if not is_movie_poster(image):
+    #    return "L'image fournie n'est pas un poster de film."
 	    
     image_transfo = transform(image)
     vector = model_3(image_transfo.unsqueeze(0)).cpu().detach().numpy().tolist()
@@ -119,9 +120,7 @@ def get_distilbert_embeddings(text):
 
 
 # Embeddings TF-IDF
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.corpus import stopwords
-import nltk
+
 
  
 # Télécharger les ressources nécessaires

@@ -12,14 +12,14 @@ RUN apt-get update && apt-get install -y \
     libstdc++6 \
     && apt-get clean
 
-# Upgrade pip to the latest version
-RUN pip install --upgrade pip
-
 # Copy the current directory contents into the container
 COPY . /app
 
+RUN pip install gdown
+RUN gdown --id 1FQJx_5gKx4SfjNkVflKtnEmoK_DWcxXX -O /app/DF_path.csv
+
 # Install Python dependencies
-RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
+RUN pip install --no-cache-dir --trusted-host pypi.python.org -r requirements-webapp.txt
 
 # Expose port 7860 for the Gradio web app
 EXPOSE 7860
